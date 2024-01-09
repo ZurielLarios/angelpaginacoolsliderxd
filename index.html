@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Inicio de Sesión</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" type="text/css" href="assets/css/login.css">
+</head>
+<body>
+
+<main class="form-signin">
+    <img class="mb-4" src="assets/images/cafecito.png" id="user_image" alt="" width="100" height="100">
+    <h1 class="Titulo" id="user_name">Acceso</h1>
+
+    <!-- Botón de inicio de sesión de Google -->
+    <button onclick="loginWithGoogle()" class="boton-google" id="login_btn_google">Iniciar con Google</button>
+
+    <!-- Botón de inicio de sesión de Facebook -->
+    <button onclick="loginFacebook()" class="boton-face" id="login_btn_facebook">Iniciar con Facebook</button>
+
+    <!-- Botón de cerrar sesión (oculto inicialmente) -->
+    <button onclick="logout()" style="display: none;" class="cerrar-sesion" id="logout_btn">Salir</button>
+</main>
+
+<script src="https://www.gstatic.com/firebasejs/7.23.0/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/7.23.0/firebase-auth.js"></script>
+<script>
+// Tu configuración de Firebase
+const firebaseConfig = {
+  apiKey: "AIzaSyBTLWz3otqAVPaLtaEH4-8Y1pdPwvimy44",
+  authDomain: "evaluacion-3er.firebaseapp.com",
+  projectId: "evaluacion-3er",
+  storageBucket: "evaluacion-3er.appspot.com",
+  messagingSenderId: "349123214637",
+  appId: "1:349123214637:web:9cc6c6d2135beb9253e7a4"
+};
+
+// Initialize Firebase
+firebase.initializeApp(firebaseConfig);
+
+// Funciones de autenticación
+function loginWithGoogle() {
+    var provider = new firebase.auth.GoogleAuthProvider();
+    firebase.auth().signInWithPopup(provider).then(function(result) {
+        var user = result.user;
+        updateUser(user, true);
+    }).catch(function(error) {
+        console.error(error);
+    });
+}
+
+function loginFacebook() {
+    var provider = new firebase.auth.FacebookAuthProvider();
+    firebase.auth().signInWithPopup(provider).then(function(result) {
+        var user = result.user;
+        updateUser(user, true);
+    }).catch(function(error) {
+        console.error(error);
+    });
+}
+
+function logout() {
+    firebase.auth().signOut().then(function() {
+        updateUser(null, false);
+    }).catch(function(error) {
+        console.error(error);
+    });
+}
+
+function updateUser(user, isLoggedIn) {
+    var userImage = document.getElementById('user_image');
+    var userNameH1 = document.getElementById('user_name');
+    var logoutBtn = document.getElementById('logout_btn');
+    var loginBtnGoogle = document.getElementById('login_btn_google');
+    var loginBtnFacebook = document.getElementById('login_btn_facebook');
+
+    if (isLoggedIn) {
+        userNameH1.innerHTML = 'Hola, ' + user.displayName;
+        userImage.src = user.photoURL;
+        loginBtnGoogle.style.display = 'none';
+        loginBtnFacebook.style.display = 'none';
+        logoutBtn.style.display = 'block';
+				logoutBtn.style.marginLeft = '750px';
+    } else {
+        userNameH1.innerHTML = 'Acceso';
+        userImage.src = 'assets/images/cafecito.png'; // Tu imagen predeterminada
+        loginBtnGoogle.style.display = 'block';
+        loginBtnFacebook.style.display = 'block';
+        logoutBtn.style.display = 'none';
+    }
+}
+</script>
+
+</body>
+</html>
